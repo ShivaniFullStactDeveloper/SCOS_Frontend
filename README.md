@@ -1,75 +1,65 @@
-#### Live Demo (Netlify)
+MentrixOS – Login Flow (Frontend)
+🔗 Live Demo
 
- You can access the live application here:
+You can access the live application here:
 
-Link:   https://meek-tanuki-c6de34.netlify.app/
+Link: https://meek-tanuki-c6de34.netlify.app/
 
-##  Login Credentials & Test Scenarios
+ Login Credentials
 
-Use the following credentials to test different flows of the application:
+Use the following credentials to test different scenarios:
 
-| Email                           | Scenario                             |
-| ------------------------------- | ------------------------------------ |
-| [a@scos.com](mailto:a@scos.com) | No Institute                         |
-| [b@scos.com](mailto:b@scos.com) | 1 Institute & 1 Role                 |
-| [c@scos.com](mailto:c@scos.com) | 1 Institute & Multiple Roles         |
-| [d@scos.com](mailto:d@scos.com) | Multiple Institutes & Multiple Roles |
-| [e@scos.com](mailto:e@scos.com) | Multiple Institutes & Single Role    |
+Email	                Password	              Scenario
 
-###  Password (for all users)
+leo@scos.com            Leo@123	                  No Institute
 
-Admin@123
+max@scos.com            Max@123	                  1 Institute & 1 Role
 
-##  Expected Flow per Case
+arlo@scos.com           Arlo@123                  1 Institute & Multiple Roles
 
-##   Invalid Credentials Handling
-If user enters:
-Wrong email
-Wrong password
+alex@scos.com          Alex@123	                  Multiple Institutes & Multiple Roles
 
-### Then system will show:
-"Invalid credentials"
+ethan@scos.com         Ethan@123	              Multiple Institutes & Single Role
 
-### [a@scos.com](mailto:a@scos.com) (No Institute)
+## Note:
+## Authentication is handled via backend APIs
+Tech Stack
+React.js
+JavaScript
+CSS (Dark Mode Supported)
+Fetch (API Calls)
 
-* After login → No institute found state
-* UI should handle empty case properly
+##  Application Flow
 
----
+## Invalid Credentials
+If user enters wrong email or password
+ Shows: "Invalid credentials"
 
-### [b@scos.com](mailto:b@scos.com) (1 Institute & 1 Role)
+## No Institute (leo@scos.com)
+Login → No institute found
 
-* Login → Directly goes to Dashboard
-* No role selection page
+## 1 Institute & 1 Role (max@scos.com)
+Login → Direct Dashboard
 
----
+## 1 Institute & Multiple Roles (arlo@scos.com)
+Login → Role Selection Page
+Select role → Dashboard
 
-### [c@scos.com](mailto:c@scos.com) (1 Institute & Multiple Roles)
+## Multiple Institutes & Multiple Roles (alex@scos.com)
+Login → Institute Selection
+Select institute → Role Selection
+Select role → Dashboard
 
-* Login → Redirect to Role Page
-* Select role → Dashboard
+## Multiple Institutes & Single Role (ethan@scos.com)
+Login → Institute Selection
+Select institute → Direct Dashboard
 
----
+# API Integration
+## This frontend connects to backend APIs for:
 
-### [d@scos.com](mailto:d@scos.com) (Multiple Institutes & Multiple Roles)
+User login
+Fetching institutes
+Fetching roles
+Role selection
 
-* Login → Institute selection page
-* Select institute → Role page
-* Select role → Dashboard
-
----
-
-### [e@scos.com](mailto:e@scos.com) (Multiple Institutes & Single Role)
-
-* Login → Institute selection page
-* Select institute → Direct Dashboard
-
----
-
-## Notes
-
-* All flows are handled using **conditional navigation logic**
-* Data is stored using **localStorage**
-* No backend is used (static simulation)
-
----
+## All API calls are handled using Fetch.
