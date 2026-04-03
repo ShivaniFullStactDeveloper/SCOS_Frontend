@@ -9,17 +9,17 @@ Link: https://meek-tanuki-c6de34.netlify.app/
 
 Use the following credentials to test different scenarios:
 
-Email	                Password	              Scenario
+Email	         |       Password	       |       Scenario
 
-leo@scos.com            Leo@123	                  No Institute
+leo@scos.com     |       Leo@123	       |           No Institute
 
-max@scos.com            Max@123	                  1 Institute & 1 Role
+max@scos.com     |       Max@123	       |           1 Institute & 1 Role
 
-arlo@scos.com           Arlo@123                  1 Institute & Multiple Roles
+arlo@scos.com    |      Arlo@123           |       1 Institute & Multiple Roles
 
-alex@scos.com          Alex@123	                  Multiple Institutes & Multiple Roles
+alex@scos.com    |      Alex@123	       |           Multiple Institutes & Multiple Roles
 
-ethan@scos.com         Ethan@123	              Multiple Institutes & Single Role
+ethan@scos.com   |      Ethan@123	       |       Multiple Institutes & Single Role
 
 ## Note:
 ## Authentication is handled via backend APIs
