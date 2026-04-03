@@ -31,7 +31,7 @@ export default function Dashboard() {
       localStorage.clear(); // clear all data
       localStorage.setItem("theme", theme); // restore theme
 
-      navigate("/"); // redirect to login
+      navigate("/" , { replace: true }); // redirect to login
     }
   };
 

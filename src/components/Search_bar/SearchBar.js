@@ -15,7 +15,7 @@ export default function SearchBar({ value, onChange }) {
 
         <input
           type="text"
-          placeholder="Search your institute..."
+          placeholder="Search your institute"
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />

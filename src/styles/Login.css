@@ -285,3 +285,14 @@ body {
     right: 20px;
   }
 }
+
+
+.page-wrapper.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.continue-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

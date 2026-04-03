@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // import { users } from "../../data/UserData";
 import Logo from "../../assets/images/black-logo.png";
 import { FooterLogin } from "../../components/Footer/Footer";
+import { FadeLoader } from "react-spinners";
 
 // Moon Icon
 const MoonIcon = () => (
@@ -57,6 +58,7 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Dark Mode
   const [dark, setDark] = useState(
@@ -95,7 +97,7 @@ export default function Login() {
     // Multiple institutes → Institute page
     if (user.institutes.length > 1) {
       localStorage.setItem("institutes", JSON.stringify(user.institutes));
-      navigate("/institutes");
+      navigate("/institutes", { replace: true });
       return;
     }
 
@@ -112,13 +114,13 @@ export default function Login() {
 
     //  Multiple roles → Role page
     if (institute.roles.length > 1) {
-      navigate("/roles");
+      navigate("/roles" , { replace: true });
       return;
     }
 
     //  Single role → Dashboard
     localStorage.setItem("selectedRole", JSON.stringify(institute.roles[0]));
-    navigate("/dashboard");
+    navigate("/dashboard" , { replace: true });
   };
 
   //  LOGIN HANDLER
@@ -145,155 +147,170 @@ export default function Login() {
       return;
     }
 
-    try {
-      // LOGIN API
-      const res = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email: username,
-          password: password
-        })
-      });
-
-      const data = await res.json();
-
-      if (!data.success) {
-        setError(data.message);
-        return;
-      }
-
-      //  Store token
-      localStorage.setItem("preToken", data.pre_context_token);
-
-      //  MAPPING API
-      const mapRes = await fetch(
-        "http://localhost:3000/api/auth/my-institutes-roles",
-        {
+    // ALL VALIDATIONS PASSED - PROCEED WITH LOGIN
+    setLoading(true);
+    // FORCE 3 sec delay
+    setTimeout(async () => {
+      try {
+        // LOGIN API
+        const res = await fetch("http://localhost:3000/api/auth/login", {
+          method: "POST",
           headers: {
-            Authorization: `Bearer ${data.pre_context_token}`
-          }
-        }
-      );
-
-      const mapData = await mapRes.json();
-
-      if (!mapData.success) {
-        setError("Mapping failed");
-        return;
-      }
-
-      const mappings = mapData.data;
-
-      // CONVERT API DATA → USER FORMAT (GROUPING ROLES UNDER INSTITUTES)                                   
-      const instituteMap = {};
-
-      mappings.forEach((item) => {
-        if (!instituteMap[item.institute_id]) {
-          instituteMap[item.institute_id] = {
-            institute_id: item.institute_id,
-            institute_name: item.institute_name,
-            location: item.location,
-            type: item.type,
-            logo: item.logo,
-            roles: []
-          };
-        }
-
-        instituteMap[item.institute_id].roles.push({
-          role_id: item.role_id,
-          role_name: item.role_name,
-          desc: item.description,
-          icon: item.icon
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email: username,
+            password: password
+          })
         });
-      });
 
-      const institutes = Object.values(instituteMap);
+        const data = await res.json();
 
-      //  CREATE USER OBJECT
-      const userObj = {
-        email: username,
-        full_name:
-          data.user?.full_name ||
-          data.user?.name ||
-          data.user?.email ||
-          username,
-        institutes: institutes
-      };
+        if (!data.success) {
+          setError(data.message);
+          setLoading(false);  // STOP LOADING
+          return;
+        }
+
+        //  Store token
+        localStorage.setItem("preToken", data.pre_context_token);
+
+        //  MAPPING API
+        const mapRes = await fetch(
+          "http://localhost:3000/api/auth/my-institutes-roles",
+          {
+            headers: {
+              Authorization: `Bearer ${data.pre_context_token}`
+            }
+          }
+        );
+
+        const mapData = await mapRes.json();
+
+        if (!mapData.success) {
+          setError("Mapping failed");
+          setLoading(false); // STOP LOADING
+          return;
+        }
+
+        const mappings = mapData.data;
+
+        // CONVERT API DATA → USER FORMAT (GROUPING ROLES UNDER INSTITUTES)                                   
+        const instituteMap = {};
+
+        mappings.forEach((item) => {
+          if (!instituteMap[item.institute_id]) {
+            instituteMap[item.institute_id] = {
+              institute_id: item.institute_id,
+              institute_name: item.institute_name,
+              location: item.location,
+              type: item.type,
+              logo: item.logo,
+              roles: []
+            };
+          }
+
+          instituteMap[item.institute_id].roles.push({
+            role_id: item.role_id,
+            role_name: item.role_name,
+            desc: item.description,
+            icon: item.icon
+          });
+        });
+
+        const institutes = Object.values(instituteMap);
+
+        //  CREATE USER OBJECT
+        const userObj = {
+          email: username,
+          full_name:
+            data.user?.full_name ||
+            data.user?.name ||
+            data.user?.email ||
+            username,
+          institutes: institutes
+        };
 
 
-      //  CALL SAME OLD FUNCTION
-      handleRouting(userObj);
+        //  CALL SAME OLD FUNCTION
+        setLoading(false);   // STOP LOADING
+        handleRouting(userObj);
 
-    } catch (error) {
-      console.log(error);
-      setError("Server error");
-    }
-  };
+      } catch (error) {
+        console.log(error);
+        setError("Server error");
+        setLoading(false);  // STOP LOADING
+      }
+    }, 2000); // 3 sec delay
+    };
 
-  return (
-    <div className="page-wrapper">
-      {/* Top Icons */}
-      <div className="top-right-icons">
-        <button className="icon-btn">
-          <AlertIcon />
-        </button>
-
-        <button
-          className="icon-btn"
-          onClick={() => setDark(prev => !prev)}
-        >
-          {dark ? <LightIcon /> : <MoonIcon />}
-        </button>
-      </div>
-
-      {/* Login Card */}
-      <div className="login-card">
-        <div className="card-logo">
-          <img src={Logo} className="logo-img" alt="logo" />
-        </div>
-        <div className="card-subtitle">
-        <h1 className="card-title">Mentrix<span style={{ color: "#0073FF" }}>OS</span></h1>
-        {/* SUBTITLE */}
-       
-        <p className="card-para-one">
-          MentrixOS =
-          <span style={{ color: "#F76C1D" }}> Mentor</span> +
-          Matrix +
-          <span style={{ color: "#0073FF" }}> Metrics</span>
-        </p>
-
-        <p className="card-para-two">
-          combined into one <span>Operating System</span> for your institute
-        </p>
-        </div>
-        <form className="card-form" onSubmit={handleLogin}>
-          <Input
-            placeholder="Email"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {/* Error msg show */}
-          {error && <p className="error-msg">{error}</p>}
-
-          {/* Continue button */}
-          <button className="continue-btn" type="submit">
-            Continue
+    return (
+      <div className={`page-wrapper ${loading ? "loading" : ""}`}>
+        {/* Top Icons */}
+        <div className="top-right-icons">
+          <button className="icon-btn">
+            <AlertIcon />
           </button>
-        </form>
+
+          <button
+            className="icon-btn"
+            onClick={() => setDark(prev => !prev)}
+          >
+            {dark ? <LightIcon /> : <MoonIcon />}
+          </button>
+        </div>
+
+        {/* Login Card */}
+        <div className="login-card">
+          <div className="card-logo">
+            <img src={Logo} className="logo-img" alt="logo" />
+          </div>
+          <div className="card-subtitle">
+            <h1 className="card-title">Mentrix<span style={{ color: "#0073FF" }}>OS</span></h1>
+            {/* SUBTITLE */}
+
+            <p className="card-para-one">
+              MentrixOS =
+              <span style={{ color: "#F76C1D" }}> Mentor</span> +
+              Matrix +
+              <span style={{ color: "#0073FF" }}> Metrics</span>
+            </p>
+
+            <p className="card-para-two">
+              combined into one <span>Operating System</span> for your institute
+            </p>
+          </div>
+          <form className="card-form" onSubmit={handleLogin}>
+            <Input
+              placeholder="Email"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            {/* Error msg show */}
+            {error && <p className="error-msg">{error}</p>}
+
+            {/* Continue button */}
+            <button className="continue-btn" type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Continue"}
+          </button>
+          </form>
+        </div>
+
+        {loading && (
+                  <div className="overlay-loader">
+                    <FadeLoader color="#0f5c4b" />
+                  </div>
+                )}
+        {/* Footer */}
+        <FooterLogin />
       </div>
-      {/* Footer */}
-      <FooterLogin />
-    </div>
-  );
-}
+    );
+  }
