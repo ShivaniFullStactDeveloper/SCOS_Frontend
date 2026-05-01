@@ -5,9 +5,26 @@ import { useNavigate } from "react-router-dom";
 import checkLogo from "../../assets/role_logos/check.png";
 import { FooterRole } from "../../components/Footer/Footer";
 
+// LOGOS
+import adminLogo from "../../assets/role_logos/administrator.png";
+import teacherLogo from "../../assets/role_logos/teacher.png";
+import parentLogo from "../../assets/role_logos/parent.png";
+import principalLogo from "../../assets/role_logos/principal.png";
+
+
 export default function RolePage() {
 
   const navigate = useNavigate();
+
+  // ROLE ICON ARRAY / OBJECT
+  const roleIcons = {
+    administrator: adminLogo,
+    admin: adminLogo,
+    teacher: teacherLogo,
+    parent: parentLogo,
+    principal: principalLogo,
+  };
+
 
   // Get user and institute from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
@@ -21,7 +38,7 @@ export default function RolePage() {
     try {
       const preToken = localStorage.getItem("preToken");
 
-      const res = await fetch("http://localhost:3000/api/auth/select-context", {
+      const res = await fetch("https://scos-backend-1.onrender.com/api/auth/select-context", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +95,7 @@ export default function RolePage() {
       {/* SELECTED INSTITUTE */}
       <div className="selected-inst">
         <div className="left para">
-          <img src={`http://localhost:3000${institute?.logo}`} alt="" />
+          <img src={institute?.logo} alt={institute?.institute_name} />
           <div>
             <h4>{institute?.institute_name}</h4>
 
@@ -113,7 +130,14 @@ export default function RolePage() {
           >
 
             <div className="left">
-              <img src={`http://localhost:3000${role.icon}`} alt="" className="role-icon" />
+              <img
+                src={
+                  roleIcons[role.role_name?.toLowerCase()] || adminLogo
+                }
+                alt={role.role_name}
+                className="role-icon"
+              />
+
 
               <div>
                 <h4>{role.role_name}</h4>

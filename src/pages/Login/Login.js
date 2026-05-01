@@ -153,7 +153,7 @@ export default function Login() {
     setTimeout(async () => {
       try {
         // LOGIN API
-        const res = await fetch("http://localhost:3000/api/auth/login", {
+        const res = await fetch("https://scos-backend-1.onrender.com/api/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -177,7 +177,7 @@ export default function Login() {
 
         //  MAPPING API
         const mapRes = await fetch(
-          "http://localhost:3000/api/auth/my-institutes-roles",
+          "https://scos-backend-1.onrender.com/api/auth/my-institutes-roles",
           {
             headers: {
               Authorization: `Bearer ${data.pre_context_token}`

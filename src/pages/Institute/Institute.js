@@ -25,7 +25,7 @@ export default function InstitutePage() {
         const token = localStorage.getItem("preToken");
 
         const res = await fetch(
-          "http://localhost:3000/api/auth/my-institutes-roles",
+          "https://scos-backend-1.onrender.com/api/auth/my-institutes-roles",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -125,7 +125,7 @@ export default function InstitutePage() {
             }}
           >
             <div className="left">
-              <img src={`http://localhost:3000${item.logo}`} alt="" />
+              <img src={item.logo} alt={item.institute_name} />
               <div>
                 <h4><HighlightText text={item.institute_name} search={search} /></h4>
 

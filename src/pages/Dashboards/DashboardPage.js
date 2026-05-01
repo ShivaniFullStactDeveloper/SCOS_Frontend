@@ -16,7 +16,7 @@ export default function Dashboard() {
       const token = localStorage.getItem("access_token");
 
       //  Backend API call
-      await fetch("http://localhost:5000/api/auth/logout", {
+      await fetch("https://scos-backend-1.onrender.com/api/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
